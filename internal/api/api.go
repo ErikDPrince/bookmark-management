@@ -15,7 +15,11 @@ type api struct {
 }
 
 func New() Engine {
-	return &api{app: gin.Default()}
+	a := &api{
+		app: gin.New(),
+	}
+	a.registerEP()
+	return a
 }
 
 func (a *api) Start() error {

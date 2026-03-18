@@ -16,6 +16,7 @@ type passwordService struct {
 
 // Password  interface represents the password services interface
 type Password interface {
+	GeneratePassword() (string, error)
 }
 
 // NewPassWordService creates a new password service
