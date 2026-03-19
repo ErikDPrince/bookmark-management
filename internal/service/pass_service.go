@@ -15,7 +15,10 @@ type passwordService struct {
 }
 
 // Password  interface represents the password services interface
+//go:generate mockery --name Password --filename pass_service.go
+
 type Password interface {
+	GeneratePassword() (string, error)
 }
 
 // NewPassWordService creates a new password service
