@@ -12,14 +12,20 @@ type Engine interface {
 
 type api struct {
 	app *gin.Engine
+	cfg *Config
 }
 
-func New() Engine {
-	return &api{app: gin.Default()}
+func New(cfg *Config) Engine {
+	a := &api{
+		app: gin.New(),
+		cfg: cfg,
+	}
+	a.registerEP()
+	return a
 }
 
 func (a *api) Start() error {
-	return a.app.Run(":8080")
+	return a.app.Run(":" + a.cfg.AppPort)
 }
 
 func (a *api) registerEP() {
