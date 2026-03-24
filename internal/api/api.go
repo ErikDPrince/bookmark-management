@@ -21,6 +21,7 @@ func New(cfg *Config) Engine {
 		cfg: cfg,
 	}
 	a.registerEP()
+	a.registerHealthEP()
 	return a
 }
 
