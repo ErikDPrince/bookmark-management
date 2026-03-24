@@ -1,9 +1,16 @@
 package api
 
-import "github.com/kelseyhightower/envconfig"
+import (
+	"strings"
+
+	"github.com/google/uuid"
+	"github.com/kelseyhightower/envconfig"
+)
 
 type Config struct {
-	AppPort string `envconfig:"APP_PORT" default:"8080"`
+	AppPort     string `envconfig:"APP_PORT" default:"8080"`
+	ServiceName string `envconfig:"SERVICE_NAME" default:"bookmark-management"`
+	InstanceID  string `envconfig:"INSTANCE_ID" default:""`
 }
 
 func NewConfig() (*Config, error) {
@@ -12,6 +19,11 @@ func NewConfig() (*Config, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	if strings.TrimSpace(cfg.InstanceID) == "" {
+		cfg.InstanceID = uuid.New().String()
+	}
+
 	return cfg, nil
 
 }

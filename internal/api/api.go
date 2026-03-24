@@ -33,3 +33,9 @@ func (a *api) registerEP() {
 	passHandler := handler.NewPassword(passSvc)
 	a.app.GET("/password", passHandler.GenPass)
 }
+
+func (a *api) registerHealthEP() {
+	healthSvc := service.NewHealthService(a.cfg.ServiceName, a.cfg.InstanceID)
+	healthHandler := handler.NewHealthHandler(healthSvc)
+	a.app.GET("/health-check", healthHandler.Check)
+}
