@@ -24,7 +24,7 @@ func NewHealthService(serviceName, instanceID string) Health {
 
 func (h *healthService) Check() Response {
 	return Response{
-		Message:     "OK",
+		Message:     "ok",
 		ServiceName: h.serviceName,
 		InstanceID:  h.instanceID,
 	}
