@@ -38,6 +38,25 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/password": {
+            "get": {
+                "produces": [
+                    "text/plain"
+                ],
+                "tags": [
+                    "Password"
+                ],
+                "summary": "Generate a password",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -45,13 +64,16 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "instance_id": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "123e4567-e89b-12d3-a456-426614174000"
                 },
                 "message": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "ok"
                 },
                 "service_name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "bookmark-management"
                 }
             }
         }
@@ -69,10 +91,10 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
 	Host:             "localhost:8080",
-	BasePath:         "/api",
+	BasePath:         "/",
 	Schemes:          []string{"http"},
 	Title:            "Bookmark Management API",
-	Description:      "Bookmark Management API",
+	Description:      "Default listen port is 8080 (APP_PORT). Swagger Try it out uses @host below — run the server on the same port (unset APP_PORT or APP_PORT=8080).",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 }

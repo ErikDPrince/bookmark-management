@@ -1,18 +1,22 @@
-basePath: /api
+basePath: /
 definitions:
   service.Response:
     properties:
       instance_id:
+        example: 123e4567-e89b-12d3-a456-426614174000
         type: string
       message:
+        example: ok
         type: string
       service_name:
+        example: bookmark-management
         type: string
     type: object
 host: localhost:8080
 info:
   contact: {}
-  description: Bookmark Management API
+  description: Default listen port is 8080 (APP_PORT). Swagger Try it out uses @host
+    below — run the server on the same port (unset APP_PORT or APP_PORT=8080).
   title: Bookmark Management API
   version: "1.0"
 paths:
@@ -31,6 +35,18 @@ paths:
       summary: Check health
       tags:
       - Health
+  /password:
+    get:
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Generate a password
+      tags:
+      - Password
 schemes:
 - http
 securityDefinitions:

@@ -4,13 +4,13 @@
     ],
     "swagger": "2.0",
     "info": {
-        "description": "Bookmark Management API",
+        "description": "Default listen port is 8080 (APP_PORT). Swagger Try it out uses @host below — run the server on the same port (unset APP_PORT or APP_PORT=8080).",
         "title": "Bookmark Management API",
         "contact": {},
         "version": "1.0"
     },
     "host": "localhost:8080",
-    "basePath": "/api",
+    "basePath": "/",
     "paths": {
         "/health-check": {
             "get": {
@@ -34,6 +34,25 @@
                     }
                 }
             }
+        },
+        "/password": {
+            "get": {
+                "produces": [
+                    "text/plain"
+                ],
+                "tags": [
+                    "Password"
+                ],
+                "summary": "Generate a password",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -41,13 +60,16 @@
             "type": "object",
             "properties": {
                 "instance_id": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "123e4567-e89b-12d3-a456-426614174000"
                 },
                 "message": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "ok"
                 },
                 "service_name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "bookmark-management"
                 }
             }
         }

@@ -7,11 +7,11 @@ import (
 )
 
 // @title           Bookmark Management API
-// @description     Bookmark Management API
+// @description     Default listen port is 8080 (APP_PORT). Swagger Try it out uses @host below — run the server on the same port (unset APP_PORT or APP_PORT=8080).
 // @version         1.0
-// @host           localhost:8080
-// @basePath       /api
-// @schemes        http
+// @host            localhost:8080
+// @basePath        /
+// @schemes         http
 // @securityDefinitions.apikey BearerAuth
 // @in             header
 // @name           Authorization

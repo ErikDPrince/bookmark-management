@@ -36,7 +36,7 @@ func TestPasswordHandler_GenPass(t *testing.T) {
 			},
 
 			expectedStatus: http.StatusOK,
-			expectResp:     "1234567890",
+			expectResp:     "{\"password\":\"1234567890\"}",
 		},
 	}
 

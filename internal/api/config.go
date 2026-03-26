@@ -20,6 +20,10 @@ func NewConfig() (*Config, error) {
 		return nil, err
 	}
 
+	if strings.TrimSpace(cfg.AppPort) == "" {
+		cfg.AppPort = "8080"
+	}
+
 	if strings.TrimSpace(cfg.InstanceID) == "" {
 		cfg.InstanceID = uuid.New().String()
 	}

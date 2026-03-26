@@ -37,7 +37,7 @@ func TestPasswordEndpoint(t *testing.T) {
 
 			},
 			expectedStatus: http.StatusOK,
-			expectRespLen:  10,
+			expectRespLen:  25,
 		},
 	}
 	for _, tc := range testCases {

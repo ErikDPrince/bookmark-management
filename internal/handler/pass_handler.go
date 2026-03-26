@@ -19,19 +19,17 @@ func NewPassword(svc service.Password) Password {
 	return &passwordHandler{passService: svc}
 }
 
-// GenPass godoc
+// GenPass handles HTTP request to generate a password.
 // @Summary Generate a password
 // @Tags Password
-// @Produce text/plain
-// @Success 200 {string} string
-// @Router /password [get]
-
-// GenPass handles HTTP request to generate a password (uses gin).
+// @Produce json
+// @Success 200 {object} map[string]string
+// @Router  /password [get]
 func (h *passwordHandler) GenPass(c *gin.Context) {
-	// TODO: call h.passService.GeneratePassword() and return JSON
 	pass, err := h.passService.GeneratePassword()
 	if err != nil {
 		c.String(http.StatusInternalServerError, "error")
+		return
 	}
-	c.String(http.StatusOK, pass)
+	c.JSON(http.StatusOK, gin.H{"password": pass})
 }
