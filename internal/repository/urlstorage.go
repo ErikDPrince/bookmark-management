@@ -12,6 +12,7 @@ const (
 )
 
 type URLStorage interface {
+	StoreURL(ctx context.Context, code, url string) error
 }
 
 type urlStorage struct {
