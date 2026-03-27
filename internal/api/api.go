@@ -9,6 +9,7 @@ import (
 	"github.com/ErikDPrince/bookmark-management/internal/handler"
 	"github.com/ErikDPrince/bookmark-management/internal/service"
 	"github.com/gin-gonic/gin"
+	"github.com/redis/go-redis/v9"
 )
 
 type Engine interface {
@@ -16,8 +17,9 @@ type Engine interface {
 }
 
 type api struct {
-	app *gin.Engine
-	cfg *Config
+	app         *gin.Engine
+	cfg         *Config
+	redisClient *redis.Client
 }
 
 func New(cfg *Config) Engine {
