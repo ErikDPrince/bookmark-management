@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	codeLength = 7
+	shortenCodeLen = 7
 )
 
 type ShortenURL interface {
@@ -28,7 +28,7 @@ func NewShortenURLService(urlStorage repository.URLStorage, codeGen CodeGenerato
 
 func (s *shortenURLService) ShortenURL(ctx context.Context, url string) (string, error) {
 	// gen code
-	code, err := s.codeGen.GenerateCode(codeLength)
+	code, err := s.codeGen.GenerateCode(shortenCodeLen)
 	if err != nil {
 		return "", err
 	}

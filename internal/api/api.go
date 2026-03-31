@@ -10,6 +10,7 @@ import (
 	"github.com/ErikDPrince/bookmark-management/internal/service"
 	"github.com/gin-gonic/gin"
 	"github.com/redis/go-redis/v9"
+	"github.com/ErikDPrince/bookmark-management/internal/repository"
 )
 
 type Engine interface {
@@ -56,4 +57,12 @@ func (a *api) registerSwaggerEP() {
 		ginSwagger.DefaultModelsExpandDepth(-1),
 		ginSwagger.DocExpansion("none"),
 	))
+}
+
+func (a *api) registerShortenURLEP() {
+	repo := repository.NewURLStorage(a.redisClient)
+	codeGen := service.NewCodeGenerator()
+	svc := service.NewShortenURLService(repo, codeGen)
+	handler := handler.NewShortenURLHandler(svc)
+	a.app.POST("/shorten-url", handler.ShortenURL)
 }
