@@ -1,5 +1,13 @@
 basePath: /
 definitions:
+  handler.ShortenURLRequest:
+    properties:
+      exp:
+        default: 3600
+        type: integer
+      url:
+        type: string
+    type: object
   service.Response:
     properties:
       instance_id:
@@ -38,15 +46,53 @@ paths:
   /password:
     get:
       produces:
-      - text/plain
+      - application/json
       responses:
         "200":
           description: OK
           schema:
-            type: string
+            additionalProperties:
+              type: string
+            type: object
       summary: Generate a password
       tags:
       - Password
+  /v1/links/shorten:
+    post:
+      consumes:
+      - application/json
+      description: Generate random short code and store mapping URL
+      parameters:
+      - description: Shorten URL request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.ShortenURLRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Shorten URL
+      tags:
+      - Links
 schemes:
 - http
 securityDefinitions:

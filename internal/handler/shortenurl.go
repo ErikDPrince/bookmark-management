@@ -21,8 +21,8 @@ func NewShortenURLHandler(shortenURLService service.ShortenURL) ShortenURLHandle
 	}
 }
 
-type shortenURLRequest struct {
-	URL string `json:"url" `
+type ShortenURLRequest struct {
+	URL string `json:"url"`
 	Exp int64  `json:"exp" default:"3600"`
 }
 
@@ -30,16 +30,15 @@ type shortenURLRequest struct {
 // @Summary Shorten URL
 // @Description Generate random short code and store mapping URL
 // @Tags Links
-//@Accept json
-//@Produce json
-//@Param request body shortenURLRequest true "Shorten URL request"
-//@Success 200 {object} map[string]string
-//@Failure 400 {object} map[string]string
-//@Failure 500 {object} map[string]string
-//@Router /v1/links/shorten [post]
-
+// @Accept json
+// @Produce json
+// @Param request body ShortenURLRequest true "Shorten URL request"
+// @Success 200 {object} map[string]string
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /v1/links/shorten [post]
 func (s *shortenURLHandler) ShortenURL(c *gin.Context) {
-	input := &shortenURLRequest{}
+	input := &ShortenURLRequest{}
 	if err := c.ShouldBindJSON(input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
 		return
