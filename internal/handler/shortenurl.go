@@ -38,6 +38,11 @@ type ShortenURLRequest struct {
 // @Failure 500 {object} map[string]string
 // @Router /v1/links/shorten [post]
 func (s *shortenURLHandler) ShortenURL(c *gin.Context) {
+
+	// layer input
+	// call service <input:code> --> url --> output
+
+	// redirect client to url
 	input := &ShortenURLRequest{}
 	if err := c.ShouldBindJSON(input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
@@ -53,4 +58,15 @@ func (s *shortenURLHandler) ShortenURL(c *gin.Context) {
 		"code":    code,
 		"message": "Shorten URL generated successfully!",
 	})
+}
+func (s *shortenURLHandler) GetURL(c *gin.Context) {
+	// lay input
+	code := c.Param("code")
+
+	if code == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid input"})
+		return
+	}
+
+	// call service <input:code> --> url --> output
 }

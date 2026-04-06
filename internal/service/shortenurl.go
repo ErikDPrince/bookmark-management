@@ -12,6 +12,7 @@ const (
 
 type ShortenURL interface {
 	ShortenURL(ctx context.Context, url string) (string, error)
+	GetURL(ctx context.Context, code string) (string, error)
 }
 
 type shortenURLService struct {
@@ -39,4 +40,14 @@ func (s *shortenURLService) ShortenURL(ctx context.Context, url string) (string,
 	}
 	// return code
 	return code, nil
+}
+
+func (s *shortenURLService) GetURL(ctx context.Context, code string) (string, error) {
+	// call repo get url
+	url, err := s.urlStorage.GetURL(ctx, code)
+	if err != nil {
+		return "", err
+	}
+	// return url
+	return url, nil
 }
