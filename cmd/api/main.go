@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/ErikDPrince/bookmark-management/internal/api"
+	"github.com/ErikDPrince/bookmark-management/pkg/logger"
 )
 
 // @title           Bookmark Management API
@@ -16,12 +17,16 @@ import (
 // @in             header
 // @name           Authorization
 func main() {
-
+	logger.SetLogLevel()
 	cfg, err := api.NewConfig()
 	if err != nil {
 		log.Fatal(err)
 	}
-	// Đặt tên khác package `api` để tránh shadow và dễ đọc.
-	engine := api.New(cfg)
-	engine.Start()
+	engine, err := api.New(cfg)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if err := engine.Start(); err != nil {
+		log.Fatal(err)
+	}
 }

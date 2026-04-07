@@ -111,16 +111,65 @@
                     }
                 }
             }
+        },
+        "/v1/links/{code}": {
+            "get": {
+                "description": "Looks up the code in Redis and responds with HTTP 301 Moved Permanently; the Location header is the original URL.",
+                "tags": [
+                    "Links"
+                ],
+                "summary": "Resolve short link",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Short code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "301": {
+                        "description": "Redirect (follow Location header)",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "headers": {
+                            "Location": {
+                                "type": "string",
+                                "description": "Original URL"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
         "handler.ShortenURLRequest": {
             "type": "object",
+            "required": [
+                "url"
+            ],
             "properties": {
-                "exp": {
-                    "type": "integer",
-                    "default": 3600
-                },
                 "url": {
                     "type": "string"
                 }

@@ -2,8 +2,10 @@ package service
 
 import (
 	"context"
+	"errors"
 
 	"github.com/ErikDPrince/bookmark-management/internal/repository"
+	"github.com/redis/go-redis/v9"
 )
 
 const (
@@ -42,10 +44,17 @@ func (s *shortenURLService) ShortenURL(ctx context.Context, url string) (string,
 	return code, nil
 }
 
+// GetURL looks up the code in Redis and returns the stored URL.
+
+var ErrCodeNotExist = errors.New("code not exists")
+
 func (s *shortenURLService) GetURL(ctx context.Context, code string) (string, error) {
 	// call repo get url
 	url, err := s.urlStorage.GetURL(ctx, code)
 	if err != nil {
+		if errors.Is(err, redis.Nil) {
+			return "", ErrCodeNotExist
+		}
 		return "", err
 	}
 	// return url

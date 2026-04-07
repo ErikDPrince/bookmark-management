@@ -5,6 +5,7 @@ import (
 
 	"github.com/ErikDPrince/bookmark-management/internal/service"
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog/log"
 )
 
 type passwordHandler struct {
@@ -28,7 +29,8 @@ func NewPassword(svc service.Password) Password {
 func (h *passwordHandler) GenPass(c *gin.Context) {
 	pass, err := h.passService.GeneratePassword()
 	if err != nil {
-		c.String(http.StatusInternalServerError, "error")
+		log.Error().Err(err).Msg("failed to generate password")
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"password": pass})

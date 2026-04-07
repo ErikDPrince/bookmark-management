@@ -16,6 +16,10 @@ func (m *mockURLStorage) StoreURL(ctx context.Context, code, url string) error {
 	return m.storeFn(ctx, code, url)
 }
 
+func (m *mockURLStorage) GetURL(ctx context.Context, code string) (string, error) {
+	return "", errors.New("not used in this test")
+}
+
 type mockCodeGen struct {
 	genFn func(length int) (string, error)
 }

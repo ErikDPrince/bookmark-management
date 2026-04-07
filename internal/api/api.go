@@ -1,68 +1,74 @@
 package api
 
 import (
+	"fmt"
+
 	_ "github.com/ErikDPrince/bookmark-management/docs"
 
-	swaggerFiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
-
 	"github.com/ErikDPrince/bookmark-management/internal/handler"
+	"github.com/ErikDPrince/bookmark-management/internal/repository"
 	"github.com/ErikDPrince/bookmark-management/internal/service"
+	redispkg "github.com/ErikDPrince/bookmark-management/pkg/redis"
+
 	"github.com/gin-gonic/gin"
 	"github.com/redis/go-redis/v9"
-	"github.com/ErikDPrince/bookmark-management/internal/repository"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 type Engine interface {
 	Start() error
 }
 
-type api struct {
+type engine struct {
 	app         *gin.Engine
 	cfg         *Config
 	redisClient *redis.Client
 }
 
-func New(cfg *Config) Engine {
-	a := &api{
-		app: gin.New(),
-		cfg: cfg,
+// New builds the HTTP engine: Redis client, Gin router, and all routes.
+func New(cfg *Config) (Engine, error) {
+	redisClient, err := redispkg.NewClient("")
+	if err != nil {
+		return nil, err
 	}
-	a.registerEP()
-	a.registerHealthEP()
-	a.registerSwaggerEP()
 
-	return a
+	e := &engine{
+		app:         gin.New(),
+		cfg:         cfg,
+		redisClient: redisClient,
+	}
+	e.initRoutes()
+	return e, nil
 }
 
-func (a *api) Start() error {
-	return a.app.Run(":" + a.cfg.AppPort)
+func (e *engine) Start() error {
+	return e.app.Run(fmt.Sprintf(":%s", e.cfg.AppPort))
 }
 
-func (a *api) registerEP() {
+// initRoutes wires HTTP routes (read top-to-bottom like a route table).
+func (e *engine) initRoutes() {
+	// Password
 	passSvc := service.NewPassWordService()
-	passHandler := handler.NewPassword(passSvc)
-	a.app.GET("/password", passHandler.GenPass)
-}
+	passH := handler.NewPassword(passSvc)
+	e.app.GET("/password", passH.GenPass)
 
-func (a *api) registerHealthEP() {
-	healthSvc := service.NewHealthService(a.cfg.ServiceName, a.cfg.InstanceID)
-	healthHandler := handler.NewHealthHandler(healthSvc)
-	a.app.GET("/health-check", healthHandler.Check)
-}
+	// Shorten URL (matches Swagger: POST /v1/links/shorten)
+	repo := repository.NewURLStorage(e.redisClient)
+	shortenSvc := service.NewShortenURLService(repo, service.NewCodeGenerator())
+	shortenH := handler.NewShortenURLHandler(shortenSvc)
+	e.app.POST("/v1/links/shorten", shortenH.ShortenURL)
+	e.app.GET("/v1/links/:code", shortenH.GetURL)
 
-func (a *api) registerSwaggerEP() {
-	a.app.GET("/docs/*any", ginSwagger.WrapHandler(
+	// Health
+	healthSvc := service.NewHealthService(e.cfg.ServiceName, e.cfg.InstanceID)
+	healthH := handler.NewHealthHandler(healthSvc)
+	e.app.GET("/health-check", healthH.Check)
+
+	// Swagger UI
+	e.app.GET("/docs/*any", ginSwagger.WrapHandler(
 		swaggerFiles.Handler,
 		ginSwagger.DefaultModelsExpandDepth(-1),
 		ginSwagger.DocExpansion("none"),
 	))
-}
-
-func (a *api) registerShortenURLEP() {
-	repo := repository.NewURLStorage(a.redisClient)
-	codeGen := service.NewCodeGenerator()
-	svc := service.NewShortenURLService(repo, codeGen)
-	handler := handler.NewShortenURLHandler(svc)
-	a.app.POST("/shorten-url", handler.ShortenURL)
 }

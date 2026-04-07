@@ -20,6 +20,10 @@ func (m *mockShortenURLService) ShortenURL(ctx context.Context, url string) (str
 	return m.shortenURLFunc(ctx, url)
 }
 
+func (m *mockShortenURLService) GetURL(ctx context.Context, code string) (string, error) {
+	return "", errors.New("not used in this test")
+}
+
 func TestShortenURLHandler_ShortenURL(t *testing.T) {
 	t.Parallel()
 	gin.SetMode(gin.TestMode)

@@ -1,10 +1,12 @@
 package handler
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/ErikDPrince/bookmark-management/internal/service"
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog/log"
 )
 
 type shortenURLHandler struct {
@@ -13,6 +15,7 @@ type shortenURLHandler struct {
 
 type ShortenURLHandler interface {
 	ShortenURL(c *gin.Context)
+	GetURL(c *gin.Context)
 }
 
 func NewShortenURLHandler(shortenURLService service.ShortenURL) ShortenURLHandler {
@@ -22,8 +25,7 @@ func NewShortenURLHandler(shortenURLService service.ShortenURL) ShortenURLHandle
 }
 
 type ShortenURLRequest struct {
-	URL string `json:"url"`
-	Exp int64  `json:"exp" default:"3600"`
+	URL string `json:"url" binding:"required,url"`
 }
 
 // ShortenURL godoc
@@ -51,6 +53,7 @@ func (s *shortenURLHandler) ShortenURL(c *gin.Context) {
 
 	code, err := s.shortenURLService.ShortenURL(c, input.URL)
 	if err != nil {
+		log.Error().Err(err).Msg("failed to shorten URL")
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
@@ -59,6 +62,17 @@ func (s *shortenURLHandler) ShortenURL(c *gin.Context) {
 		"message": "Shorten URL generated successfully!",
 	})
 }
+
+// GetURL resolves a short code and redirects the client to the stored URL.
+// @Summary Resolve short link
+// @Description Looks up the code in Redis and responds with HTTP 301 Moved Permanently; the Location header is the original URL.
+// @Tags Links
+// @Param code path string true "Short code"
+// @Success 301 {string} string "Redirect (follow Location header)"
+// @Header 301 {string} Location "Original URL"
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /v1/links/{code} [get]
 func (s *shortenURLHandler) GetURL(c *gin.Context) {
 	// lay input
 	code := c.Param("code")
@@ -69,4 +83,17 @@ func (s *shortenURLHandler) GetURL(c *gin.Context) {
 	}
 
 	// call service <input:code> --> url --> output
+	url, err := s.shortenURLService.GetURL(c, code)
+	if err != nil {
+
+		if errors.Is(err, service.ErrCodeNotExist) {
+			c.JSON(http.StatusNotFound, gin.H{"error": "code not exists"})
+			return
+		}
+
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		return
+	}
+	//redirect client to url
+	c.Redirect(http.StatusMovedPermanently, url)
 }

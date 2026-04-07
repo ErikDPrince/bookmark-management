@@ -12,6 +12,9 @@ swagger:
 
 dev-run: swagger run
 
+
+COVERAGE_EXCLUDE=mocks|docs|main.go|test
+
 test:
 	go test ./... -coverprofile=coverage.tmp -covermode=atomic -coverpkg=./... -p 1
 	grep -vE "$(COVERAGE_EXCLUDE)" coverage.tmp > coverage.out
