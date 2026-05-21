@@ -8,6 +8,7 @@ import (
 
 const EnvLogLevel = "LOG_LEVEL"
 
+// SetLogLevel set the global log level based on the environment variable LOG_LEVEL
 func SetLogLevel() {
 	level, err := zerolog.ParseLevel(os.Getenv(EnvLogLevel))
 	if err != nil || level == zerolog.NoLevel {
